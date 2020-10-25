@@ -1,6 +1,6 @@
 # Code for HAN experiment - Mashrur
 
-DISCLAIMER: This is not a very well written documentation but is definitely better than you-know-who :)
+This is a code adaptation of Deutsch, Jasbi and Shieber(2020). I have modified it to use it with the twitter corpus provided by Jacod and Uitdenbogerd (2019)
 
 <br>
 
