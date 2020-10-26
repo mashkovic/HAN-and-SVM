@@ -320,7 +320,8 @@ def train(
                 "accuracy",
                 "precision",
                 "recall",
-                "f1",
+                "weighted f1",
+                "macro f1"
                 "confusion_matrix"])
 
         true = te_label
@@ -336,7 +337,8 @@ def train(
         print("Test set accuracy: {}".format(test_metrics["accuracy"]))
         print("Test set precision: {}".format(test_metrics["precision"]))
         print("Test set recall: {}".format(test_metrics["recall"]))
-        print("Test set f1: {}".format(test_metrics["f1"]))
+        print("Test set weighted f1: {}".format(test_metrics["f1"]))
+        print("Test set macro f1: {}".format(test_metrics["macro_f1"]))
         print("Test set cm: {}".format(test_metrics["confusion_matrix"]))
 
         accuracies_all_folds.append(test_metrics["accuracy"])
