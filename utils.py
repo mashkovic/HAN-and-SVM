@@ -7,19 +7,43 @@ import pandas as pd
 from nltk.tokenize import sent_tokenize, word_tokenize
 from sklearn import metrics
 import numpy as np
-
+from math import sqrt
 
 def get_evaluation(y_true, y_prob, list_metrics):
     y_pred = np.argmax(y_prob, -1)
-    output = {}
+    
+    report = metrics.classification_report(y_true, y_pred,output_dict=True)
+    weighted_f1 = metrics.f1_score(y_true, y_pred, average='weighted')
+    macro_f1 = metrics.f1_score(y_true, y_pred, average='macro')
+    micro_f1 = metrics.f1_score(y_true, y_pred, average='micro')
+    rsme = sqrt(metrics.mean_squared_error(y_true, y_pred))
+    output = {
+        'accuracy':report['accuracy'],
+        'macro_avg_precision':report['macro avg']['precision'],
+        'macro_avg_recall':report['macro avg']['recall'],
+        'macro_avg_f1':report['macro avg']['f1-score'],
+        'weighted_avg_precision':report['weighted avg']['precision'],
+        'weighted_avg_recall':report['weighted avg']['recall'],
+        'weighted_avg_f1':report['weighted avg']['f1-score'],
+        'weighted_f1':weighted_f1 ,
+        'macro_f1':macro_f1,
+        'micro_f1':micro_f1,
+        'rsme':rsme
+    }
+    
+    
     if 'accuracy' in list_metrics:
-        output['accuracy'] = metrics.accuracy_score(y_true, y_pred)
+        output['accuracy_metrics'] = metrics.accuracy_score(y_true, y_pred)
     if 'precision' in list_metrics:
         output['precision'] = metrics.precision_score(
             y_true, y_pred, average="weighted")
     if 'recall' in list_metrics:
         output['recall'] = metrics.recall_score(
             y_true, y_pred, average="weighted")
+    if 'f1' in list_metrics:
+        output['f1'] = metrics.f1_score(y_true, y_pred, average="weighted")
+    if 'f1' in list_metrics:
+        output['f1'] = metrics.f1_score(y_true, y_pred, average="weighted")
     if 'f1' in list_metrics:
         output['f1'] = metrics.f1_score(y_true, y_pred, average="weighted")
     if 'loss' in list_metrics:
@@ -30,6 +54,7 @@ def get_evaluation(y_true, y_prob, list_metrics):
     if 'confusion_matrix' in list_metrics:
         output['confusion_matrix'] = str(
             metrics.confusion_matrix(y_true, y_pred))
+    
     return output
 
 

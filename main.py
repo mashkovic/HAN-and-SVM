@@ -27,10 +27,10 @@ opt = {
     'lr': 0.0001,
     'num_epochs': 20,
     'test_interval': 1,
-    'es_min_delta': 0.0001,
-    'es_patience': 10,
+    'es_min_delta': 0.001,
+    'es_patience': 7,
     'momentum': 0.9,
-    'output': './output/mashrur_new_test'
+    'output': './out/mashrur_new_test'
 }
 
 
@@ -137,6 +137,8 @@ def train(
     precision_all_folds = []
     recall_all_folds = []
     f1_all_folds = []
+    f1_macro_all_folds = []
+    f1_micro_all_folds = []
 
     if fed_data is None:
         kf = model_selection.KFold(n_splits=5)
@@ -321,7 +323,8 @@ def train(
                 "precision",
                 "recall",
                 "weighted f1",
-                "macro f1"
+                "macro f1",
+                "f1",
                 "confusion_matrix"])
 
         true = te_label
@@ -329,22 +332,27 @@ def train(
         predicted_all_folds.extend(preds)
         true_all_folds.extend(true)
 
-        f1 = f1_score(true, preds, average='weighted')
-        macro_f1 = f1_score(true, preds, average='macro')
-        micro_f1 = f1_score(true, preds, average='micro')
-        rmse = sqrt(mean_squared_error(true, preds))
+        f1 = test_metrics['f1']
+        macro_f1 = test_metrics['macro_f1']
+        micro_f1 = test_metrics['micro_f1']
+        rmse = test_metrics['rsme']
 
-        print("Test set accuracy: {}".format(test_metrics["accuracy"]))
-        print("Test set precision: {}".format(test_metrics["precision"]))
-        print("Test set recall: {}".format(test_metrics["recall"]))
-        print("Test set weighted f1: {}".format(test_metrics["f1"]))
-        print("Test set macro f1: {}".format(test_metrics["macro_f1"]))
-        print("Test set cm: {}".format(test_metrics["confusion_matrix"]))
+        # print("Test set accuracy: {}".format(test_metrics["accuracy"]))
+        # print("Test set precision: {}".format(test_metrics["precision"]))
+        # print("Test set recall: {}".format(test_metrics["recall"]))
+        # print("Test set weighted f1: {}".format(test_metrics["f1"]))
+        # print("Test set macro f1: {}".format(test_metrics["macro_f1"]))
+        # print("Test set cm: {}".format(test_metrics["confusion_matrix"]))
+
+        for (metric, val) in test_metrics.items():
+            print("Test set {0}: {1}".format(metric, val))
 
         accuracies_all_folds.append(test_metrics["accuracy"])
         precision_all_folds.append(test_metrics["precision"])
         recall_all_folds.append(test_metrics["recall"])
         f1_all_folds.append(test_metrics["f1"])
+        f1_macro_all_folds.append(macro_f1)
+        f1_micro_all_folds.append(micro_f1)
         print()
 
     print()
@@ -359,6 +367,8 @@ def train(
     print('All folds precision: ', precision_all_folds)
     print('All folds recall: ', recall_all_folds)
     print('All folds f1: ', f1_all_folds)
+    print('All folds macro - f1: ', f1_macro_all_folds)
+    print('All folds micro - f1: ', f1_micro_all_folds)
 
     if fed_data is not None:
         class FakeMagpie:
